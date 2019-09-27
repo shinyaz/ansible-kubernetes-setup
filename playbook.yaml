@@ -1,0 +1,7 @@
+---
+- name: Build kubernetes servers on Ubuntu
+  hosts: all
+  roles:
+    - common
+    - crio
+    - kubernetes

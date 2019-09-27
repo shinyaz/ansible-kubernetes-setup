@@ -1,0 +1,47 @@
+---
+- name: Add modules
+  modprobe:
+    name: "{{ item }}"
+  with_items:
+      - overlay
+      - br_netfilter
+
+- name: Set parameters in /etc/sysctl.d/99-kubernetes-cri.conf
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    sysctl_file: /etc/sysctl.d/99-kubernetes-cri.conf
+    reload: yes
+  with_items:
+    - name: net.bridge.bridge-nf-call-iptables
+      value: 1
+    - name: net.ipv4.ip_forward
+      value: 1
+    - name: net.bridge.bridge-nf-call-ip6tables
+      value: 1
+
+- name: Add projectatomic repository from PPA
+  apt_repository:
+    repo: ppa:projectatomic/ppa
+
+- name: Update all repositories cache
+  apt:
+    update_cache: yes
+  changed_when: False
+
+- name: Install cri-o package
+  apt:
+    name: "cri-o-{{ crio_version }}"
+
+- name: Templat a file to /etc/crio/crio.conf
+  template:
+    src: crio.conf.j2
+    dest: /etc/crio/crio.conf
+  notify: Restart cri-o service
+
+- name: Enable and start cri-o service
+  systemd:
+    name: crio
+    state: started
+    enabled: yes
+    daemon_reload: yes

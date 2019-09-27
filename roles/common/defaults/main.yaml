@@ -1,0 +1,10 @@
+---
+common_timezone: "Asia/Tokyo"
+common_packages:
+  - avahi-daemon
+  - curl
+  - git
+  - golang
+  - tmux
+  - vim
+  - zsh

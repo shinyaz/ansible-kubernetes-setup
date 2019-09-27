@@ -1,0 +1,42 @@
+---
+- name: Update hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+
+- name: Set timezone
+  timezone:
+    name: "{{ common_timezone }}"
+
+- name: Add a line to /etc/sudoers
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^{{ ansible_user }} ALL='
+    line: '{{ ansible_user }} ALL=(ALL) NOPASSWD: ALL'
+    validate: '/usr/sbin/visudo -cf %s'
+
+- name: Add a line to /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '^127\.0\.1\.1\s'
+    line: '127.0.1.1	{{ inventory_hostname }}'
+    insertafter: '^127\.0\.0\.1\s'
+
+- name: Install the package aptitute
+  apt:
+    name: aptitude
+
+- name: Update all repositories cache
+  apt:
+    update_cache: yes
+  changed_when: False
+
+- name: Upgrade all packages to the latst version
+  apt:
+    upgrade: "yes"
+  notify: Reboot servers
+
+- name: Install a list of packages
+  apt:
+    name: "{{ common_packages }}"
+  notify: Reboot servers

@@ -1,0 +1,6 @@
+---
+crio_version: "1.15"
+crio_conf:
+  registries:
+    - "quay.io"
+    - "docker.io"

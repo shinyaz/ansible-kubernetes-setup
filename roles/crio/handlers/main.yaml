@@ -1,0 +1,6 @@
+---
+- name: Restart cri-o service
+  systemd:
+    name: crio
+    state: restarted
+
