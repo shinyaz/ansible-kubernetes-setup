@@ -10,10 +10,14 @@
 
 - name: Install k8s packages
   apt:
+    force_apt_get: yes
     name:
       - kubeadm={{ kubernetes_version }}
       - kubelet={{ kubernetes_version }}
       - kubectl={{ kubernetes_version }}
+  ignore_errors: "{{ ansible_check_mode }}"
+  notify:
+    - reboot_server
     
 - name: Prevent k8s packages from being upgraded
   dpkg_selections:
@@ -27,6 +31,12 @@
 - name: Disable swap
   command: swapoff -a
   when: ansible_swaptotal_mb > 0
+
+- name: Delete swapfile from /etc/fstab
+  mount:
+    path: none
+    fstype: swap
+    state: absent
 
 - name: Ensure KUBELET_EXTRA_ARGS is set
   lineinfile:

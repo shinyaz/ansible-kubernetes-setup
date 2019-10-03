@@ -22,21 +22,20 @@
     line: '127.0.1.1	{{ inventory_hostname }}'
     insertafter: '^127\.0\.0\.1\s'
 
-- name: Install the package aptitute
-  apt:
-    name: aptitude
-
 - name: Update all repositories cache
   apt:
+    force_apt_get: yes
     update_cache: yes
   changed_when: False
 
 - name: Upgrade all packages to the latst version
   apt:
+    force_apt_get: yes
     upgrade: "yes"
-  notify: Reboot servers
+  notify: reboot_server
 
 - name: Install a list of packages
   apt:
+    force_apt_get: yes
     name: "{{ common_packages }}"
-  notify: Reboot servers
+  notify: reboot_server
