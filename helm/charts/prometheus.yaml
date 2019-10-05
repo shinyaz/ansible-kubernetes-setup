@@ -1,0 +1,13 @@
+alertmanager:
+  persistentVolume:
+    size: 1Gi
+    storageClass: "rook-ceph-block"
+  service:
+    type: LoadBalancer
+server:
+  persistentVolume:
+    size: 1Gi
+    storageClass: "rook-ceph-block"
+  retention: "12h"
+pushgateway:
+  enabled: false
