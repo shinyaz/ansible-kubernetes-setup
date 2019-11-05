@@ -1,0 +1,11 @@
+---
+- name: Configure basic setting
+  hosts: all
+  roles:
+    - common
+
+- name: Build kubernetes servers on Ubuntu
+  hosts: all
+  roles:
+    - containerd
+    - kubernetes
